@@ -1,9 +1,11 @@
 package gen
 
 import (
-	"b-nova-openhub/stapagen/pkg/header"
-	"b-nova-openhub/stapagen/pkg/md"
-	"b-nova-openhub/stapagen/pkg/url"
+	"b-nova-techub/cobra-demo/pkg/util"
+	"github.com/gomarkdown/markdown"
+	"github.com/gosimple/slug"
+	"github.com/spf13/viper"
+	"strings"
 )
 
 type StaticPage struct {
@@ -34,9 +36,9 @@ func Generate(files []string) *Generating {
 
 	for _, f := range files {
 		var p StaticPage
-		frontMatter := header.GetFrontMatter(f)
+		frontMatter := getFrontMatter(f)
 		p.Title = frontMatter["title"]
-		p.Permalink = url.GetPermalink(frontMatter["title"])
+		p.Permalink = getPermalink(frontMatter["title"])
 		p.Author = frontMatter["author"]
 		p.Tags = frontMatter["tags"]
 		p.Categories = frontMatter["categories"]
@@ -44,7 +46,7 @@ func Generate(files []string) *Generating {
 		p.Description = frontMatter["description"]
 		p.ShowComments = frontMatter["showComments"]
 		p.IsPublished = frontMatter["publish"]
-		p.Body = md.ConvertBodyToMarkdown(f)
+		p.Body = convertBodyToMarkdown(f)
 		pages = append(pages, p)
 	}
 
@@ -53,4 +55,43 @@ func Generate(files []string) *Generating {
 	Generated.Success = true
 	Generated.Errors = make([]string, 0)
 	return Generated
+}
+
+func getFrontMatter(file string) map[string]string {
+	header := getHeader(file)
+	return getKeyValues(header, ":")
+}
+
+func getHeader(file string) string {
+	header := util.SubstringBetween(file, "<"+viper.GetString("delimiter")+">", "</"+viper.GetString("delimiter")+">")
+	return string(header)
+}
+
+func getKeyValues(s, sep string) map[string]string {
+	lines := strings.Split(s, "\n")
+	frontMatter := make(map[string]string)
+	for _, pair := range lines {
+		if util.StringNotEmpty(pair) {
+			kv := strings.Split(pair, sep)
+			frontMatter[kv[0]] = strings.TrimSpace(kv[1])
+		}
+	}
+	return frontMatter
+}
+
+func getPermalink(s string) string {
+	return "b-nova.com/home/content/" + slug.Make(s)
+}
+
+func getSlug(s string) string {
+	slices := strings.Split(s, "/")
+	return slices[len(slices)-1]
+}
+
+func convertBodyToMarkdown(s string) string {
+	return string(markdown.ToHTML([]byte(getBody(s)), nil, nil))
+}
+
+func getBody(s string) string {
+	return util.SubstringAfter(s, "</"+viper.GetString("delimiter")+">")
 }

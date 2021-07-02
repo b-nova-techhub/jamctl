@@ -1,7 +1,7 @@
 package main
 
 import (
-	commands "b-nova-techub/cobra-demo/commands"
+	"b-nova-techub/cobra-demo/commands"
 	"fmt"
 )
 

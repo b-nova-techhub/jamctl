@@ -31,13 +31,6 @@ func SubstringBetween(s, start, end string) []byte {
 	return between
 }
 
-func DerefString(s *string) string {
-	if s != nil {
-		return *s
-	}
-	return ""
-}
-
 func StringNotEmpty(s string) bool {
 	return s != ""
 }

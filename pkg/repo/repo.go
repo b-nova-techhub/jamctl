@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func RepoContents() []string {
@@ -25,7 +26,7 @@ func RepoContents() []string {
 }
 
 func getGitRepository(path string) {
-	projectPath := viper.GetString("absolutePath")
+	projectPath := viper.GetString("absolutePath") + "/" + getSlug(viper.GetString("repositoryUrl"))
 	pathExists, pathErr := pathExists(projectPath)
 
 	if pathErr != nil {
@@ -61,8 +62,8 @@ func pathExists(path string) (bool, error) {
 }
 
 func getAllMdFilesInPath() ([]string, error) {
-	// absoluteContentPath
-	return walkMatch(viper.GetString("absolutePath"), "*.md")
+	absoluteContentPath := viper.GetString("absolutePath") + "/" + getSlug(viper.GetString("repositoryUrl")) + viper.GetString("relativePath")
+	return walkMatch(absoluteContentPath, "*.md")
 }
 
 func walkMatch(root, pattern string) ([]string, error) {
@@ -85,4 +86,9 @@ func walkMatch(root, pattern string) ([]string, error) {
 		return nil, err
 	}
 	return matches, nil
+}
+
+func getSlug(s string) string {
+	slices := strings.Split(s, "/")
+	return slices[len(slices)-1]
 }
