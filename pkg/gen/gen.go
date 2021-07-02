@@ -24,8 +24,10 @@ type Generating struct {
 	Errors  []string `json:"errors"`
 }
 
-var GeneratedPages []StaticPage
-var Generated *Generating
+var (
+	GeneratedPages []StaticPage
+	Generated      *Generating
+)
 
 func Generate(files []string) *Generating {
 	pages := make([]StaticPage, 0)
@@ -47,8 +49,6 @@ func Generate(files []string) *Generating {
 	}
 
 	GeneratedPages = pages
-	SetStatus()
-
 	Generated = new(Generating)
 	Generated.Success = true
 	Generated.Errors = make([]string, 0)
