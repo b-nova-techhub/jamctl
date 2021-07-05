@@ -1,7 +1,7 @@
 package gen
 
 import (
-	"b-nova-techub/cobra-demo/pkg/util"
+	"github.com/b-nova-techhub/jamctl/pkg/util"
 	"github.com/gomarkdown/markdown"
 	"github.com/gosimple/slug"
 	"github.com/spf13/viper"

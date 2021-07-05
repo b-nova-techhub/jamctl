@@ -1,4 +1,4 @@
-module b-nova-openhub/stapagen
+module github.com/b-nova-techhub/jamctl
 
 go 1.16
 
