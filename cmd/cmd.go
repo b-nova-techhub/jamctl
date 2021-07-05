@@ -21,9 +21,9 @@ var (
 	version string
 	commit  string
 
-	DemoCmd = &cobra.Command{
-		Use:           "demo",
-		Short:         "demo - using cobra as cli framework",
+	JamCtlCmd = &cobra.Command{
+		Use:           "jamctl",
+		Short:         "jamctl – command-line tool to interact with jamstack",
 		Long:          ``,
 		SilenceErrors: true,
 		SilenceUsage:  true,
@@ -36,7 +36,7 @@ var (
 
 		// either run demo as a server, or run it as a CLI depending on what flags
 		// are provided
-		RunE: startDemo,
+		RunE: startCtl,
 	}
 )
 
@@ -59,7 +59,7 @@ func readConfig(ccmd *cobra.Command, args []string) error {
 func preFlight(ccmd *cobra.Command, args []string) error {
 	// if --version is passed print the version info
 	if showVers {
-		fmt.Printf("demo %s (%s)\n", version, commit)
+		fmt.Printf("jamctl %s (%s)\n", version, commit)
 		return fmt.Errorf("")
 	}
 
@@ -72,7 +72,7 @@ func preFlight(ccmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func startDemo(ccmd *cobra.Command, args []string) error {
+func startCtl(ccmd *cobra.Command, args []string) error {
 	// convert the log level
 	logLvl := lumber.LvlInt(viper.GetString("log-level"))
 
@@ -86,14 +86,14 @@ func startDemo(ccmd *cobra.Command, args []string) error {
 func init() {
 	logLevel := "INFO"
 
-	DemoCmd.PersistentFlags().String("log-level", logLevel, "Output level of logs (TRACE, DEBUG, INFO, WARN, ERROR, FATAL)")
+	JamCtlCmd.PersistentFlags().String("log-level", logLevel, "Output level of logs (TRACE, DEBUG, INFO, WARN, ERROR, FATAL)")
 
-	viper.BindPFlag("log-level", DemoCmd.PersistentFlags().Lookup("log-level"))
+	viper.BindPFlag("log-level", JamCtlCmd.PersistentFlags().Lookup("log-level"))
 
-	DemoCmd.Flags().StringVarP(&config, "config", "c", "", "Path to config file (with extension)")
-	DemoCmd.Flags().BoolVarP(&showVers, "version", "v", false, "Display the current version of this CLI")
+	JamCtlCmd.Flags().StringVarP(&config, "config", "c", "", "Path to config file (with extension)")
+	JamCtlCmd.Flags().BoolVarP(&showVers, "version", "v", false, "Display the current version of this CLI")
 
-	DemoCmd.AddCommand(getCmd)
-	DemoCmd.AddCommand(listCmd)
-	DemoCmd.AddCommand(updateCmd)
+	JamCtlCmd.AddCommand(getCmd)
+	JamCtlCmd.AddCommand(listCmd)
+	JamCtlCmd.AddCommand(updateCmd)
 }

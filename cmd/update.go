@@ -1,9 +1,11 @@
 package commands
 
 import (
+	"fmt"
 	"github.com/b-nova-techhub/jamctl/pkg/gen"
 	"github.com/b-nova-techhub/jamctl/pkg/repo"
 	"github.com/spf13/cobra"
+	"os"
 )
 
 var (
@@ -17,7 +19,7 @@ var (
 )
 
 func init() {
-	includeUpdateFlags(getCmd)
+	includeUpdateFlags(updateCmd)
 }
 
 func includeUpdateFlags(cmd *cobra.Command) {
@@ -29,5 +31,11 @@ func includeUpdateFlags(cmd *cobra.Command) {
 }
 
 func update(ccmd *cobra.Command, args []string) {
-	gen.Generate(repo.RepoContents())
+
+	if len(args) > 1 {
+		gen.Generate(repo.RepoContents(os.Args[1]))
+	} else {
+		fmt.Fprintln(os.Stderr, "No repository is specified. Please specify a valid git repository url.")
+		return
+	}
 }

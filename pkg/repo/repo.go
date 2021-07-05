@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"fmt"
 	"github.com/go-git/go-git/v5"
 	"github.com/spf13/viper"
 	"io/ioutil"
@@ -10,8 +11,8 @@ import (
 	"strings"
 )
 
-func RepoContents() []string {
-	getGitRepository(viper.GetString("absolutePath"))
+func RepoContents(repoUrl string) []string {
+	getGitRepository(validateRepoUrl(repoUrl))
 	files, mdErr := getAllMdFilesInPath()
 	if mdErr != nil {
 		log.Fatalln("Error during markdown files parsing.")
@@ -25,8 +26,17 @@ func RepoContents() []string {
 	return contentFiles
 }
 
-func getGitRepository(path string) {
-	projectPath := viper.GetString("absolutePath") + "/" + getSlug(viper.GetString("repositoryUrl"))
+func validateRepoUrl(repoUrl string) string {
+	if !strings.HasPrefix(repoUrl, "http://") {
+		repoUrl = "http://" + repoUrl
+	}
+	fmt.Printf("Repository URL: ", repoUrl)
+	return viper.GetString("absolutePath")
+}
+
+func getGitRepository(repoUrl string) {
+	projectPath := viper.GetString("absolutePath") + "/" + getSlug(repoUrl)
+	fmt.Printf("Target repository clone path:", projectPath)
 	pathExists, pathErr := pathExists(projectPath)
 
 	if pathErr != nil {

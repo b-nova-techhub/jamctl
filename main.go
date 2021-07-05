@@ -1,4 +1,4 @@
-package jamctl
+package main
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	err := commands.DemoCmd.Execute()
+	err := commands.JamCtlCmd.Execute()
 	if err != nil && err.Error() != "" {
 		fmt.Println(err)
 	}
