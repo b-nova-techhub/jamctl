@@ -21,17 +21,7 @@ type StaticPage struct {
 	Body         string `json:"body"`
 }
 
-type Generating struct {
-	Success bool     `json:"success"`
-	Errors  []string `json:"errors"`
-}
-
-var (
-	GeneratedPages []StaticPage
-	Generated      *Generating
-)
-
-func Generate(files []string) *Generating {
+func Generate(files []string) []StaticPage {
 	pages := make([]StaticPage, 0)
 
 	for _, f := range files {
@@ -50,11 +40,7 @@ func Generate(files []string) *Generating {
 		pages = append(pages, p)
 	}
 
-	GeneratedPages = pages
-	Generated = new(Generating)
-	Generated.Success = true
-	Generated.Errors = make([]string, 0)
-	return Generated
+	return pages
 }
 
 func getFrontMatter(file string) map[string]string {

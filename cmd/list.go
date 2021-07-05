@@ -1,9 +1,11 @@
-package commands
+package cmd
 
 import (
 	"fmt"
-	"github.com/b-nova-techhub/jamctl/pkg/gen"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"io/ioutil"
+	"log"
 )
 
 var (
@@ -17,5 +19,11 @@ var (
 )
 
 func list(ccmd *cobra.Command, args []string) {
-	fmt.Print(gen.GeneratedPages)
+	repos, err := ioutil.ReadDir(viper.GetString("absolutePath"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, r := range repos {
+		fmt.Println(r.Name())
+	}
 }

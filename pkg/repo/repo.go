@@ -11,9 +11,8 @@ import (
 	"strings"
 )
 
-func RepoContents(repoUrl string) []string {
-	getGitRepository(validateRepoUrl(repoUrl))
-	files, mdErr := getAllMdFilesInPath()
+func ReadRepoContents(repo string) []string {
+	files, mdErr := getAllMdFilesInPath(repo)
 	if mdErr != nil {
 		log.Fatalln("Error during markdown files parsing.")
 	}
@@ -27,14 +26,14 @@ func RepoContents(repoUrl string) []string {
 }
 
 func validateRepoUrl(repoUrl string) string {
-	if !strings.HasPrefix(repoUrl, "http://") {
-		repoUrl = "http://" + repoUrl
+	if !strings.HasPrefix(repoUrl, "https://") {
+		repoUrl = "https://" + repoUrl
 	}
 	fmt.Printf("Repository URL: ", repoUrl)
-	return viper.GetString("absolutePath")
+	return repoUrl
 }
 
-func getGitRepository(repoUrl string) {
+func GetGitRepository(repoUrl string) {
 	projectPath := viper.GetString("absolutePath") + "/" + getSlug(repoUrl)
 	fmt.Printf("Target repository clone path:", projectPath)
 	pathExists, pathErr := pathExists(projectPath)
@@ -44,17 +43,17 @@ func getGitRepository(repoUrl string) {
 	}
 
 	if !pathExists {
-		cloneErr := cloneToFilesystem(projectPath)
+		cloneErr := cloneToFilesystem(projectPath, repoUrl)
 		if cloneErr != nil {
 			log.Fatalf("Error during git clone. Path: %+x\n", projectPath)
 		}
 	}
 }
 
-func cloneToFilesystem(path string) error {
+func cloneToFilesystem(path, url string) error {
 	log.Println("Git clone to path: ", path)
 	_, err := git.PlainClone(path, false, &git.CloneOptions{
-		URL:      viper.GetString("repositoryUrl"),
+		URL:      url,
 		Progress: os.Stdout,
 	})
 	return err
@@ -71,8 +70,8 @@ func pathExists(path string) (bool, error) {
 	return false, err
 }
 
-func getAllMdFilesInPath() ([]string, error) {
-	absoluteContentPath := viper.GetString("absolutePath") + "/" + getSlug(viper.GetString("repositoryUrl")) + viper.GetString("relativePath")
+func getAllMdFilesInPath(projectName string) ([]string, error) {
+	absoluteContentPath := viper.GetString("absolutePath") + "/" + projectName + viper.GetString("relativePath")
 	return walkMatch(absoluteContentPath, "*.md")
 }
 

@@ -1,9 +1,12 @@
-package commands
+package cmd
 
 import (
 	"fmt"
 	"github.com/b-nova-techhub/jamctl/pkg/gen"
+	"github.com/b-nova-techhub/jamctl/pkg/repo"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"os"
 )
 
 var (
@@ -17,24 +20,19 @@ var (
 )
 
 func init() {
-	includeGetFlags(getCmd)
-}
-
-func includeGetFlags(cmd *cobra.Command) {
+	getCmd.Flags().String("absolutePath", "ABSOLUTE PATH", "The absolute path where the git repository is going to cloned to.")
+	getCmd.Flags().String("relativePath", "RELATIVE PATH", "The directory within the git repository which contains the markdown files.")
+	getCmd.Flags().StringP("delimiter", "d", "", "The tag that is being used as the front matter delimiter.")
+	viper.SetDefault("absolutePath", "/tmp/jamctl")
+	viper.SetDefault("relativePath", "/content")
+	viper.SetDefault("delimiter", "b-nova-content-header")
 }
 
 func get(ccmd *cobra.Command, args []string) {
-	pages := gen.GeneratedPages
-	page := getPageById(args[1], pages)
-	fmt.Print(page)
-}
-
-func getPageById(id string, pages []gen.StaticPage) *gen.StaticPage {
-	var page *gen.StaticPage
-	for _, p := range pages {
-		if p.Permalink == id {
-			page = &p
-		}
+	if len(args) > 0 {
+		fmt.Print(gen.Generate(repo.ReadRepoContents(args[0])))
+	} else {
+		fmt.Fprintln(os.Stderr, "No repository is specified. Please specify a valid git repository url.")
+		return
 	}
-	return page
 }

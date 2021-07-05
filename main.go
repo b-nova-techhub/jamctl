@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	err := commands.JamCtlCmd.Execute()
+	err := cmd.Execute()
 	if err != nil && err.Error() != "" {
 		fmt.Println(err)
 	}
