@@ -1,1 +1,1 @@
-# go-cobra-demo
+# jamctl
