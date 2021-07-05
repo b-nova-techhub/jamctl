@@ -19,7 +19,11 @@ var (
 
 func update(ccmd *cobra.Command, args []string) {
 	if len(args) > 0 {
-		repo.GetGitRepository(args[0])
+		repo.GetGitRepository(args[0], true)
+		fmt.Printf("Repo updated.\n")
+		home, err := os.UserHomeDir()
+		cobra.CheckErr(err)
+		viper.WriteConfigAs(home + "/jamctl.yaml")
 	} else {
 		fmt.Fprintln(os.Stderr, "No repository is specified. Please specify a valid git repository url.")
 		return

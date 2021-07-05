@@ -3,6 +3,7 @@ package repo
 import (
 	"fmt"
 	"github.com/go-git/go-git/v5"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"io/ioutil"
 	"log"
@@ -25,33 +26,41 @@ func ReadRepoContents(repo string) []string {
 	return contentFiles
 }
 
+func GetGitRepository(repoUrl string, overwrite bool) {
+	projectPath := viper.GetString("absolutePath") + "/" + getSlug(repoUrl)
+	fmt.Printf("Target repository clone path: %s\n", projectPath)
+	pathExists, pathErr := pathExists(projectPath)
+	cobra.CheckErr(pathErr)
+
+	if pathExists {
+		if overwrite {
+			err := os.RemoveAll(projectPath)
+			cobra.CheckErr(err)
+			syncRepo(repoUrl, projectPath)
+		} else {
+			fmt.Printf("Repository already exists.")
+		}
+	} else {
+		syncRepo(repoUrl, projectPath)
+	}
+}
+
+func syncRepo(repoUrl string, projectPath string) {
+	cloneErr := cloneToFilesystem(projectPath, validateRepoUrl(repoUrl))
+	if cloneErr != nil {
+		log.Fatalf("Error during git clone. Path: %+x\n", projectPath)
+	}
+}
+
 func validateRepoUrl(repoUrl string) string {
 	if !strings.HasPrefix(repoUrl, "https://") {
 		repoUrl = "https://" + repoUrl
 	}
-	fmt.Printf("Repository URL: ", repoUrl)
+	fmt.Printf("Target repository url: %s\n", repoUrl)
 	return repoUrl
 }
 
-func GetGitRepository(repoUrl string) {
-	projectPath := viper.GetString("absolutePath") + "/" + getSlug(repoUrl)
-	fmt.Printf("Target repository clone path:", projectPath)
-	pathExists, pathErr := pathExists(projectPath)
-
-	if pathErr != nil {
-		log.Fatalf("Error before git clone as path already seems to exist: %+x\n", projectPath)
-	}
-
-	if !pathExists {
-		cloneErr := cloneToFilesystem(projectPath, repoUrl)
-		if cloneErr != nil {
-			log.Fatalf("Error during git clone. Path: %+x\n", projectPath)
-		}
-	}
-}
-
 func cloneToFilesystem(path, url string) error {
-	log.Println("Git clone to path: ", path)
 	_, err := git.PlainClone(path, false, &git.CloneOptions{
 		URL:      url,
 		Progress: os.Stdout,

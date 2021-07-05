@@ -26,6 +26,7 @@ func Execute() error {
 func init() {
 	cobra.OnInitialize(initConfig)
 
+	jamctlCmd.AddCommand(addCmd)
 	jamctlCmd.AddCommand(getCmd)
 	jamctlCmd.AddCommand(listCmd)
 	jamctlCmd.AddCommand(updateCmd)
@@ -39,6 +40,7 @@ func initConfig() {
 		cobra.CheckErr(err)
 
 		viper.AddConfigPath(home)
+		viper.AddConfigPath(".")
 		viper.SetConfigType("yaml")
 		viper.SetConfigFile(".jamctl")
 	}
