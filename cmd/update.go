@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"b-nova-techub/cobra-demo/pkg/gen"
-	"b-nova-techub/cobra-demo/pkg/repo"
+	"github.com/b-nova-techhub/jamctl/pkg/gen"
+	"github.com/b-nova-techhub/jamctl/pkg/repo"
 	"github.com/spf13/cobra"
 )
 

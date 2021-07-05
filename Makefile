@@ -14,11 +14,11 @@ mod:
 	go mod vendor
 
 build:
-	go build -o bin/stapagen cmd/stapagen/main.go
+	go build -o bin/jamctl main.go
 
 run:
-	chmod +x stapagen.sh
-	./stapagen.sh
+	chmod +x bin/jamctl
+	./bin/jamctl
 
 install:
 	mod

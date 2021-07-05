@@ -1,8 +1,8 @@
-package main
+package jamctl
 
 import (
-	"b-nova-techub/cobra-demo/commands"
 	"fmt"
+	"github.com/b-nova-techhub/jamctl/cmd"
 )
 
 func main() {
