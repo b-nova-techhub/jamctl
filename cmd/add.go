@@ -9,11 +9,24 @@ import (
 )
 
 var (
+	targetPath   string
+	relativePath string
+
 	addCmd = &cobra.Command{
 		Use:   "add",
 		Short: "Add git repository containing markdown content files",
 		Long:  ``,
 		Run:   add,
+	}
+
+	createCmd = &cobra.Command{
+		Hidden: true,
+
+		Use:   "create",
+		Short: "Add git repository containing markdown content files",
+		Long:  ``,
+
+		Run: add,
 	}
 )
 
@@ -31,18 +44,13 @@ func add(ccmd *cobra.Command, args []string) {
 }
 
 func init() {
-	addCmd.Flags().StringVarP(&cfgFile, "config", "c", "", "Config file (default is $HOME/.jamctl.yaml)")
-	addCmd.Flags().String("absolutePath", "ABSOLUTE PATH", "The absolute path where the git repository is going to cloned to.")
-	addCmd.Flags().String("relativePath", "RELATIVE PATH", "The directory within the git repository which contains the markdown files.")
-	addCmd.Flags().StringP("branch", "b", "BRANCH", "The branch of the git repository that is to be used.")
-	addCmd.Flags().StringP("delimiter", "d", "", "The tag that is being used as the front matter delimiter.")
-	addCmd.Flags().BoolP("overwrite", "o", true, "Whether or not to overwrite an existing git repository.")
-	viper.BindPFlag("absolutePath", addCmd.Flags().Lookup("absolutePath"))
-	viper.BindPFlag("relativePath", addCmd.Flags().Lookup("relativePath"))
-	viper.BindPFlag("branch", addCmd.Flags().Lookup("branch"))
-	viper.BindPFlag("delimiter", addCmd.Flags().Lookup("delimiter"))
-	viper.BindPFlag("overwrite", addCmd.Flags().Lookup("overwrite"))
-	viper.SetDefault("absolutePath", "/tmp/jamctl")
-	viper.SetDefault("relativePath", "/content")
-	viper.SetDefault("branch", "main")
+	includeAddFlags(addCmd)
+	includeAddFlags(createCmd)
+}
+
+func includeAddFlags(cmd *cobra.Command) {
+	cmd.PersistentFlags().StringVar(&relativePath, "relativePath", "/content", "The directory within the git repository which contains the markdown files.")
+	cmd.PersistentFlags().StringVar(&targetPath, "targetPath", "/tmp/jamctl", "The absolute path where the git repository is going to cloned to.")
+	viper.BindPFlag("relativePath", cmd.PersistentFlags().Lookup("relativePath"))
+	viper.BindPFlag("targetPath", cmd.PersistentFlags().Lookup("targetPath"))
 }

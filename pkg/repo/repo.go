@@ -27,7 +27,7 @@ func ReadRepoContents(repo string) []string {
 }
 
 func GetGitRepository(repoUrl string, overwrite bool) {
-	projectPath := viper.GetString("absolutePath") + "/" + getSlug(repoUrl)
+	projectPath := viper.GetString("targetPath") + "/" + getSlug(repoUrl)
 	fmt.Printf("Target repository clone path: %s\n", projectPath)
 	pathExists, pathErr := pathExists(projectPath)
 	cobra.CheckErr(pathErr)
@@ -80,7 +80,7 @@ func pathExists(path string) (bool, error) {
 }
 
 func getAllMdFilesInPath(projectName string) ([]string, error) {
-	absoluteContentPath := viper.GetString("absolutePath") + "/" + projectName + viper.GetString("relativePath")
+	absoluteContentPath := viper.GetString("targetPath") + "/" + projectName + viper.GetString("relativePath")
 	return walkMatch(absoluteContentPath, "*.md")
 }
 

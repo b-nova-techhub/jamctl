@@ -26,6 +26,9 @@ func Execute() error {
 func init() {
 	cobra.OnInitialize(initConfig)
 
+	jamctlCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.jamctl.yaml)")
+	viper.BindPFlag("config", jamctlCmd.PersistentFlags().Lookup("config"))
+
 	jamctlCmd.AddCommand(addCmd)
 	jamctlCmd.AddCommand(getCmd)
 	jamctlCmd.AddCommand(listCmd)

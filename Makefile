@@ -21,5 +21,4 @@ run:
 	./bin/jamctl
 
 install:
-	mod
 	go install -v ./...
