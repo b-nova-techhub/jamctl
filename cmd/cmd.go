@@ -14,6 +14,7 @@ var (
 		Use:           "jamctl",
 		Short:         "jamctl – command-line tool to interact with jamstack",
 		Long:          ``,
+		Version:       "1.0.0",
 		SilenceErrors: true,
 		SilenceUsage:  true,
 	}
