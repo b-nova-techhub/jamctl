@@ -19,6 +19,9 @@ func SubstringAfter(string string, after string) string {
 func SubstringBetween(s, start, end string) []byte {
 	var between []byte
 	index := strings.Index(s, start)
+	if index == -1 {
+		return between
+	}
 	index += len(start)
 	for {
 		char := s[index]
